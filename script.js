@@ -7,11 +7,13 @@ const $message = document.querySelector('.message');
 const $score = document.querySelector('.score');
 const $guess = document.querySelector('.guess');
 const $again = document.querySelector('.again');
+const $highScore = document.querySelector('.highscore');
 
 const score = Number($score.textContent);
 const values = initializeValues();
-const secretNumber = values.secretNumber;
+let secretNumber = values.secretNumber;
 let scoreFlag = values.scoreFlag;
+let highScore = 0;
 
 $check.addEventListener(`click`, checkGuess);
 
@@ -24,16 +26,12 @@ function checkGuess() {
     } else if (guess === secretNumber) {
         handleWinGame();
     } else if (guess > (secretNumber + secretNumber/2)) {
-        displayScore();
         displayMessage('📈 Too high!');
     } else if (guess > secretNumber) {
         displayMessage('📈 High!');
-        displayScore();
     } else if (guess < (secretNumber - secretNumber/2)) {
         displayMessage('📉 Too low!');
-        displayScore();
     } else if (guess < secretNumber) {
-        displayScore();
         displayMessage('📉 Low!');
     }
 
@@ -44,10 +42,13 @@ function checkGuess() {
 }
 
 function displayMessage(message) {
+    displayScore();
     $message.textContent = message;
 }
 
 function handleWinGame() {
+    highScore = Math.max(highScore, scoreFlag);
+    $highScore.textContent = highScore;
     displayMessage('🎉 Correct Number!');
     disableButtons();
     $secretNumber.textContent = secretNumber;
@@ -62,27 +63,22 @@ function handleGameOver() {
 }
 
 function displayScore() {
-    console.log(scoreFlag);
-    scoreFlag--;
     if (scoreFlag > 0) {
         $score.textContent = scoreFlag;
     } else {
         $score.textContent = 0;
     }
+    scoreFlag--;
 }
 
 function playAgain() {
-    const { secretNumber, scoreFlag } = initializeValues();
+    const values = initializeValues();
+    secretNumber = values.secretNumber;
+    scoreFlag = values.scoreFlag;
     $body.style.backgroundColor = '#222';
     $secretNumber.style.width = '15rem';
     $secretNumber.textContent = '?';
-    $guess.value = '';
-    $guess.focus();
-    $check.disabled = false;
-    $check.style.cursor = 'pointer';
-    $guess.disabled = false;
-    $guess.style.cursor = 'text';
-    $score.textContent = scoreFlag;
+    enableButtons();
     displayMessage('Start guessing...');
 }
 
@@ -91,6 +87,15 @@ function disableButtons() {
     $check.style.cursor = 'not-allowed';
     $guess.disabled = true;
     $guess.style.cursor = 'not-allowed';
+}
+
+function enableButtons() {
+    $guess.value = '';
+    $guess.focus();
+    $check.disabled = false;
+    $check.style.cursor = 'pointer';
+    $guess.disabled = false;
+    $guess.style.cursor = 'text';
 }
 
 function initializeValues() {
