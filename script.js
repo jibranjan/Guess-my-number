@@ -1,25 +1,55 @@
 'use strict';
 
-const secretNumber = Math.trunc(Math.random() * 20) + 1;
 const $secretNumber = document.querySelector('.number');
+const $check = document.querySelector('.check');
+const $message = document.querySelector('.message');
+const $score = document.querySelector('.score');
+const $guess = document.querySelector('.guess');
 
+const secretNumber = Math.trunc(Math.random() * 20) + 1;
+let score = Number($score.textContent);
 
-document.querySelector('.check').addEventListener(`click`, function() {
-    const guess = Number(document.querySelector('.guess').value);
-    const message = document.querySelector('.message');
+$check.addEventListener(`click`, checkGuess);
 
+function displayMessage(message) {
+    $message.textContent = message;
+}
+
+function displayScore() {
+    score--;
+    if (score > 0) {
+        $score.textContent = score;
+    } else {
+        $score.textContent = 0;
+    }
+}
+
+function checkGuess() {
+    const guess = Number($guess.value);
     if (!guess) {
-        message.textContent = '⛔ No number!';
+        displayMessage('⛔ No number!');
     } else if (guess === secretNumber) {
-        message.textContent = '🎉 Correct Number!';
+        displayMessage('🎉 Correct Number!');
         $secretNumber.textContent = secretNumber;
     } else if (guess > (secretNumber + secretNumber/2)) {
-        message.textContent = '📈 Too high!';
+        displayScore();
+        displayMessage('📈 Too high!');
     } else if (guess > secretNumber) {
-        message.textContent = '📈 High!';
+        displayMessage('📈 High!');
+        displayScore();
     } else if (guess < (secretNumber - secretNumber/2)) {
-        message.textContent = '📉 Too low!';
+        displayMessage('📉 Too low!');
+        displayScore();
     } else if (guess < secretNumber) {
-        message.textContent = '📉 Low!';
+        displayScore();
+        displayMessage('📉 Low!');
     }
-});
+
+    if (score <= 0) {
+        displayMessage('💥 You lost the game!');
+        $check.disabled = true;
+        $check.style.cursor = 'not-allowed';
+        $guess.disabled = true;
+        $guess.style.cursor = 'not-allowed';
+    }
+}
