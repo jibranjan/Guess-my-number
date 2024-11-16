@@ -7,9 +7,11 @@ const $message = document.querySelector('.message');
 const $score = document.querySelector('.score');
 const $guess = document.querySelector('.guess');
 const $again = document.querySelector('.again');
-const secretNumber = Math.trunc(Math.random() * 20) + 1;
+
 const score = Number($score.textContent);
-let scoreFlag = score;
+const values = initializeValues();
+const secretNumber = values.secretNumber;
+let scoreFlag = values.scoreFlag;
 
 $check.addEventListener(`click`, checkGuess);
 
@@ -60,6 +62,7 @@ function handleGameOver() {
 }
 
 function displayScore() {
+    console.log(scoreFlag);
     scoreFlag--;
     if (scoreFlag > 0) {
         $score.textContent = scoreFlag;
@@ -69,16 +72,17 @@ function displayScore() {
 }
 
 function playAgain() {
+    const { secretNumber, scoreFlag } = initializeValues();
     $body.style.backgroundColor = '#222';
     $secretNumber.style.width = '15rem';
+    $secretNumber.textContent = '?';
     $guess.value = '';
     $guess.focus();
     $check.disabled = false;
     $check.style.cursor = 'pointer';
     $guess.disabled = false;
     $guess.style.cursor = 'text';
-    scoreFlag = score;
-    $score.textContent = score;
+    $score.textContent = scoreFlag;
     displayMessage('Start guessing...');
 }
 
@@ -87,4 +91,10 @@ function disableButtons() {
     $check.style.cursor = 'not-allowed';
     $guess.disabled = true;
     $guess.style.cursor = 'not-allowed';
+}
+
+function initializeValues() {
+    const secretNumber = Math.trunc(Math.random() * 20) + 1;
+    let scoreFlag = score;
+    return { secretNumber, scoreFlag };
 }
